@@ -1,4 +1,4 @@
-
+#pragma once
 #include <iostream>
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -6,43 +6,75 @@
 #include <vector>
 #include <cmath>
 #include "draw_line.h"
-#include "node.h"
+#include "AVL.h"
+#include <algorithm>
 
+int height(node *x)
+{
+	if (x == nullptr)
+		return -1;
+	return x->height;
+}
 
-void addNode(std::vector<node>& nodes, int W, int H) {
-	int treeHeight = getheight(nodes.size()+1);
-	int newIndex = nodes.size(), parIndex;
-	int last = nodes.size() - 1;
-	node New;
-	New.nodeCoord.y = 75 *treeHeight +200;
-	New.arrRect.h = 50;
-	New.arrRect.w = 50;
-	
-	if (nodes.size() == 27) {
-		New.arrRect.x = 50;
-		New.arrRect.y = nodes[last].arrRect.y + 50;
+node* rotate_right(node* x)
+{
+	node* temp = x->left;
+	x->left = x->left->right;
+	temp->right = x;
+	x->height = std::max(height(x->left), height(x->right)) + 1;
+	temp->height = std::max(height(temp->left), height(temp->right)) + 1;
+	return temp;
+}
+
+node* rotate_left(node *x)
+{
+	node* temp = x->right;
+	x->right = x->right->left;
+	temp->left = x;
+	x->height = std::max(height(x->left), height(x->right)) + 1;
+	temp->height = std::max(height(temp->left), height(temp->right)) + 1;
+	return temp;
+}
+
+node* Insert(int x, node *root)
+{
+	node* n = new node();
+	n->key = x;
+	n->height = 0;
+	n->left = nullptr;
+	n->right = nullptr;
+	if (root == nullptr)
+		return n;
+	else if (x < root->key)
+		root->left = Insert(x, root->left);
+	else if (x > root->key)
+		root->right = Insert(x, root->right);
+	else
+		return root;
+
+	root->height = std::max(height(root->left), height(root->right)) + 1;
+
+	int balance = height(root->left) - height(root->right);
+
+	if (balance > 1)
+	{
+		if (x < root->left->key)
+			return rotate_right(root);
+		root->left = rotate_left(root->left);
+		return rotate_right(root);
 	}
-	else {
-		New.arrRect.x = nodes[last].arrRect.x + 50;
-		New.arrRect.y = nodes[last].arrRect.y;
+	else if (balance < -1)
+	{
+		if (x > root->right->key)
+			return rotate_left(root);
+		root->right = rotate_right(root->right);
+		return rotate_left(root);
 	}
-		if (newIndex % 2 == 0){
-		parIndex = newIndex / 2 -1;
-		New.nodeCoord.x = nodes[parIndex].nodeCoord.x + W / (int)pow(2, treeHeight + 1);
-		
-	}
-	else{
-		parIndex = newIndex / 2;
-		New.nodeCoord.x = nodes[parIndex].nodeCoord.x - W / (int)pow(2, treeHeight + 1);
-		
-	}
-	nodes.push_back(New);
+	return root;
 }
 
 
 int main(int argc, char *argv[]) {
-
-	
 	SDL_Window *window;
 	SDL_Renderer* renderer;
 	SDL_DisplayMode DM;
@@ -55,10 +87,12 @@ int main(int argc, char *argv[]) {
 	const int W = DM.w;
 	const int H = DM.h;
 
-	std::vector<node> Nodes;
-	std::cout << Nodes.size() << std::endl;
-	
-
+	node *root=nullptr;
+	root = Insert(3, root);
+	root = Insert(1, root);
+	root = Insert(5, root);
+	root = Insert(0, root);
+	//std::cout << Nodes.size() << std::endl;
 	
 	TTF_Init();
 
@@ -77,7 +111,6 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 	
-	
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	SDL_SetRenderDrawColor(renderer, 169, 169, 169, 255);
 
@@ -90,37 +123,17 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-
 	SDL_Event evnt;
 	while (!quit) {
-		
 		SDL_SetRenderDrawColor(renderer, 0,0,0, SDL_ALPHA_OPAQUE);
-		drawLines(renderer, Nodes);
-
-		renderNodes(renderer, Nodes, arial);
-
+		set_coord(root,W,H);
+		drawLines(renderer, root);
+		renderNodes(renderer, root, arial);
 		while (SDL_PollEvent(&evnt)) {
 			
 			switch (evnt.type) {
 			case SDL_QUIT:
 				quit = true;
-				
-			case SDL_KEYDOWN:
-				if (evnt.key.keysym.sym == SDLK_SPACE) {
-					if (Nodes.size() == 0) {
-						node New;
-						New.nodeCoord.x = W / 2;
-						New.nodeCoord.y = 200;
-						New.arrRect.x = 50;
-						New.arrRect.y = 50;
-						New.arrRect.h = 50;
-						New.arrRect.w = 50;
-						Nodes.push_back(New);
-					}
-					else
-						addNode(Nodes, W, H);	
-
-				}
 			}
 		}
 		SDL_RenderPresent(renderer);
