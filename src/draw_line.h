@@ -8,12 +8,14 @@ void drawLine(SDL_Renderer* renderer, SDL_Point A, SDL_Point B) {
 }
 
 void drawLines(SDL_Renderer* renderer,node* root) {
-	if (root->left == nullptr)
-		return;
-	drawLine(renderer, root->nodeCoord, root->left->nodeCoord);
-	drawLines(renderer, root->left);
-	if (root->right == nullptr)
-		return;
-	drawLine(renderer, root->nodeCoord, root->right->nodeCoord);
-	drawLines(renderer, root->right);
+	if (root->left != nullptr)
+	{
+		drawLine(renderer, root->nodeCoord, root->left->nodeCoord);
+		drawLines(renderer, root->left);
+	}
+	if (root->right != nullptr)
+	{
+		drawLine(renderer, root->nodeCoord, root->right->nodeCoord);
+		drawLines(renderer, root->right);
+	}
 }

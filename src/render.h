@@ -19,31 +19,31 @@ void renderText(SDL_Renderer* renderer, std::string text, SDL_Color _color, SDL_
 }
 
 void renderNodes(SDL_Renderer* renderer, node* Nodes, TTF_Font* font) {
-	//if (Nodes == nullptr)
-	//	return;
-	//	SDL_Surface *nodeSurface;
-	//	SDL_Texture * nodeTexture;
-	//	nodeSurface = SDL_LoadBMP("../res/black.bmp");
-	//	if (!nodeSurface) {
-	//		std::cout << SDL_GetError();
-	//		return;
+	if (Nodes == nullptr)
+		return;
+		SDL_Surface *nodeSurface;
+		SDL_Texture * nodeTexture;
+		nodeSurface = SDL_LoadBMP("../res/black.bmp");
+		if (!nodeSurface) {
+			std::cout << SDL_GetError();
+			return;
+		}
+		nodeTexture = SDL_CreateTextureFromSurface(renderer, nodeSurface);
+		SDL_FreeSurface(nodeSurface);
 
-	//	nodeTexture = SDL_CreateTextureFromSurface(renderer, nodeSurface);
-	//	SDL_FreeSurface(nodeSurface);
-
-	//SDL_Rect rect = { Nodes->nodeCoord.x-25, Nodes->nodeCoord.y-25 , 50, 50 };
-	//SDL_RenderCopy(renderer, nodeTexture, NULL, &rect);
-	//SDL_DestroyTexture(nodeTexture);
-	//
-	//
-	//std::string val = std::to_string(Nodes->key);
-	//SDL_Color white = { 255,255,255 }, black = {0,0,0};
-	//SDL_Rect textRect = { Nodes->nodeCoord.x - 18, Nodes->nodeCoord.y - 20, 30, 30 };
-	////SDL_Rect arrTextRect = { Nodes[i].arrRect.x + 10, Nodes[i].arrRect.y + 10, 30, 30 };
-	//renderText(renderer, val, white, textRect, font);
-	////renderText(renderer, val, black, arrTextRect, font);
-	//renderNodes(renderer, Nodes->left, font);
-	//renderNodes(renderer, Nodes->right, font);
+	SDL_Rect rect = { Nodes->nodeCoord.x-25, Nodes->nodeCoord.y-25 , 50, 50 };
+	SDL_RenderCopy(renderer, nodeTexture, NULL, &rect);
+	SDL_DestroyTexture(nodeTexture);
+	
+	
+	std::string val = std::to_string(Nodes->key);
+	SDL_Color white = { 255,255,255 }, black = {0,0,0};
+	SDL_Rect textRect = { Nodes->nodeCoord.x - 18, Nodes->nodeCoord.y - 20, 30, 30 };
+	//SDL_Rect arrTextRect = { Nodes[i].arrRect.x + 10, Nodes[i].arrRect.y + 10, 30, 30 };
+	renderText(renderer, val, white, textRect, font);
+	//renderText(renderer, val, black, arrTextRect, font);
+	renderNodes(renderer, Nodes->left, font);
+	renderNodes(renderer, Nodes->right, font);
 
 }
 

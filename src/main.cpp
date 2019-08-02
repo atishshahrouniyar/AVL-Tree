@@ -26,6 +26,13 @@ node* rotate_right(node* x)
 	return temp;
 }
 
+node* Smallest(node* root)
+{
+	node* x = root;
+	while (x->left != nullptr)
+		x = x->left;
+	return x;
+}
 node* rotate_left(node *x)
 {
 	node* temp = x->right;
@@ -73,6 +80,69 @@ node* Insert(int x, node *root)
 	return root;
 }
 
+node* Delete(int x, node* root)
+{
+	if (root == nullptr)
+		return root;
+	if (x < root->key)
+		root->left = Delete(x, root->left);
+	else if (x > root->key)
+		root->right = Delete(x, root->right);
+	else
+	{
+		node* temp = root;
+		if (root->left == nullptr && root->right == nullptr)
+		{
+			temp = root;
+			root = nullptr;
+			delete root;
+		}
+		else if (root->left == nullptr)
+		{
+			temp = root;
+			root = root->right;
+			delete temp;
+
+		}
+		else if (root->right == nullptr)
+		{
+			temp = root;
+			root = root->left;
+			delete temp;
+		}
+		else
+		{
+			temp = Smallest(root->right);
+			root->key = temp->key;
+			root->right = Delete(temp->key, root->right);
+		}
+	}
+	if (root == nullptr)
+		return root;
+
+	root->height = std::max(height(root->left), height(root->right)) + 1;
+
+	int balance = height(root->left) - height(root->right);
+
+	if (balance > 1)
+	{
+		int balance_left = height(root->left->left) - height(root->left->right);
+		if (balance_left >= 0)
+			return rotate_right(root);
+		root->left = rotate_left(root->left);
+		return rotate_right(root);
+	}
+	else if (balance < -1)
+	{
+		int balance_right = height(root->right->left) - height(root->right->right);
+		if (balance_right <= 0)
+			return rotate_left(root);
+		root->right = rotate_right(root->right);
+		return rotate_left(root);
+	}
+	return root;
+}
+
 
 int main(int argc, char *argv[]) {
 	SDL_Window *window;
@@ -88,14 +158,78 @@ int main(int argc, char *argv[]) {
 	const int H = DM.h;
 
 	node *root=nullptr;
-	root = Insert(3, root);
-	root = Insert(1, root);
-	root = Insert(5, root);
 	root = Insert(0, root);
-	//std::cout << Nodes.size() << std::endl;
-	
-	TTF_Init();
+	root = Insert(1, root);
+	root = Insert(2, root);
+	root = Insert(3, root);
+	root = Insert(4, root);
+	root = Insert(5, root);
+	root = Insert(6, root);
+	root = Insert(7, root);
+	root = Insert(8, root);
+	root = Insert(9, root);
+	root = Insert(10, root);
+	root = Insert(11, root);
+	root = Insert(12, root);
+	root = Insert(13, root);
+	root = Insert(14, root);
+	root = Insert(15, root);
+	root = Insert(16, root);
+	root = Insert(17, root);
+	root = Insert(18, root);
+	root = Insert(19, root);
+	root = Insert(20, root);
+	root = Insert(21, root);
+	root = Insert(22, root);
+	root = Insert(23, root);
+	root = Insert(24, root);
+	root = Insert(25, root);
+	root = Insert(26, root);
+	root = Insert(27, root);
+	root = Insert(28, root);
+	root = Insert(29, root);
+	root = Insert(30, root);
+	root = Insert(31, root);
+	root = Insert(32, root);
+	root = Insert(33, root);
+	root = Insert(34, root);
+	root = Insert(35, root);
+	root = Insert(36, root);
+	root = Insert(37, root);
+	root = Insert(38, root);
+	root = Insert(39, root);
+	root = Insert(40, root);
+	root = Insert(41, root);
+	root = Insert(42, root);
+	root = Insert(43, root);
+	root = Insert(44, root);
+	root = Insert(45, root);
+	root = Insert(46, root);
+	root = Insert(47, root);
+	root = Insert(48, root);
+	root = Insert(49, root);
+	root = Insert(50, root);
+	root = Insert(51, root);
+	root = Insert(52, root);
+	root = Insert(53, root);
+	root = Insert(54, root);
+	root = Insert(55, root);
+	root = Insert(56, root);
+	root = Insert(57, root);
+	root = Insert(58, root);
+	root = Insert(59, root);
+	root = Insert(60, root);
+	root = Insert(61, root);
+	root = Insert(62, root);
+	root = Delete(30, root);
+	root = Delete(39, root);
+	root = Delete(0, root);
+	root = Delete(2, root);
+	root = Delete(4, root);
 
+	//std::cout << 7odes.size() << std::endl;
+	
+	TTF_Init();	  
 	window = SDL_CreateWindow(
 		"DSA",                 
 		SDL_WINDOWPOS_UNDEFINED,           
