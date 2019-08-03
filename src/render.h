@@ -18,6 +18,35 @@ void renderText(SDL_Renderer* renderer, std::string text, SDL_Color _color, SDL_
 	SDL_DestroyTexture(textTexture);
 }
 
+void render_particular_node(SDL_Renderer* renderer, node* node, TTF_Font* font,int x)
+{
+	SDL_Surface *nodeSurface;
+	SDL_Texture * nodeTexture;
+	if(x==0)
+		nodeSurface = SDL_LoadBMP("../res/green.bmp");
+	else if(x==1)
+		nodeSurface = SDL_LoadBMP("../res/purple.bmp");
+	else
+		nodeSurface = SDL_LoadBMP("../res/red.bmp");
+	if (!nodeSurface) {
+		std::cout << SDL_GetError();
+		return;
+	}
+	nodeTexture = SDL_CreateTextureFromSurface(renderer, nodeSurface);
+	SDL_FreeSurface(nodeSurface);
+
+	SDL_Rect rect = { node->nodeCoord.x - 25, node->nodeCoord.y - 25 , 50, 50 };
+	SDL_RenderCopy(renderer, nodeTexture, NULL, &rect);
+	SDL_DestroyTexture(nodeTexture);
+
+
+	std::string val = std::to_string(node->key);
+	SDL_Color white = { 255,255,255 }, black = { 0,0,0 };
+	SDL_Rect textRect = { node->nodeCoord.x - 18, node->nodeCoord.y - 20, 30, 30 };
+	//SDL_Rect arrTextRect = { Nodes[i].arrRect.x + 10, Nodes[i].arrRect.y + 10, 30, 30 };
+	renderText(renderer, val, white, textRect, font);
+}
+
 void renderNodes(SDL_Renderer* renderer, node* Nodes, TTF_Font* font) {
 	if (Nodes == nullptr)
 		return;

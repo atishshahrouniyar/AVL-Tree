@@ -8,6 +8,7 @@
 #include "draw_line.h"
 #include "AVL.h"
 #include <algorithm>
+#include <dos.h>
 
 int height(node *x)
 {
@@ -143,6 +144,46 @@ node* Delete(int x, node* root)
 	return root;
 }
 
+void Search(int x, node* root, SDL_Renderer* renderer, TTF_Font* font)
+{
+	if (root == nullptr)
+	{
+		std::cout << "Not Found!!!" << std::endl;
+		return;
+	}
+	else if (x == root->key)
+	{
+		render_particular_node(renderer, root, font, 0);
+		std::cout << "Found!!!" << std::endl;
+		return;
+	}
+	else if (x < root->key)
+	{
+		render_particular_node(renderer, root, font,1);
+		SDL_RenderPresent(renderer);
+		SDL_Delay(1000);
+		if(root->left!=nullptr)
+			Search(x, root->left,renderer,font);
+		else
+		{
+			render_particular_node(renderer, root, font, 2);
+			return;
+		}
+	}
+	else if (x > root->key)
+	{
+		render_particular_node(renderer, root, font,1);
+		SDL_RenderPresent(renderer);
+		SDL_Delay(1000);
+		if(root->right!=nullptr)
+			Search(x, root->right,renderer,font);
+		else
+		{
+			render_particular_node(renderer, root, font, 2);
+			return;
+		}
+	}
+}
 
 int main(int argc, char *argv[]) {
 	SDL_Window *window;
@@ -258,16 +299,23 @@ int main(int argc, char *argv[]) {
 	}
 
 	SDL_Event evnt;
+	
+
 	while (!quit) {
-		SDL_SetRenderDrawColor(renderer, 0,0,0, SDL_ALPHA_OPAQUE);
-		set_coord(root,W,H);
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+		set_coord(root, W, H);
 		drawLines(renderer, root);
 		renderNodes(renderer, root, arial);
+		SDL_RenderPresent(renderer);
 		while (SDL_PollEvent(&evnt)) {
 			
 			switch (evnt.type) {
 			case SDL_QUIT:
 				quit = true;
+			case SDL_KEYDOWN:
+				if (evnt.key.keysym.sym == SDLK_SPACE)
+					Search(17, root, renderer, arial);
+
 			}
 		}
 		SDL_RenderPresent(renderer);
