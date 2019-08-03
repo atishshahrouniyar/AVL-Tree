@@ -10,6 +10,9 @@
 #include <algorithm>
 #include <dos.h>
 
+SDL_Color text_color = { 100,230,58 };
+SDL_Rect textRect = { 500, 50, 500, 100 };
+
 int height(node *x)
 {
 	if (x == nullptr)
@@ -80,6 +83,8 @@ node* Insert(int x, node *root)
 	}
 	return root;
 }
+
+
 
 node* Delete(int x, node* root)
 {
@@ -154,12 +159,16 @@ void Search(int x, node* root, SDL_Renderer* renderer, TTF_Font* font)
 	else if (x == root->key)
 	{
 		render_particular_node(renderer, root, font, 0);
+		clear(renderer, textRect);
+		renderText(renderer, "Found !!!", text_color, textRect, font);
 		std::cout << "Found!!!" << std::endl;
 		return;
 	}
 	else if (x < root->key)
 	{
 		render_particular_node(renderer, root, font,1);
+		clear(renderer, textRect);
+		renderText(renderer, "Searching...", text_color, textRect, font);
 		SDL_RenderPresent(renderer);
 		SDL_Delay(1000);
 		if(root->left!=nullptr)
@@ -167,12 +176,18 @@ void Search(int x, node* root, SDL_Renderer* renderer, TTF_Font* font)
 		else
 		{
 			render_particular_node(renderer, root, font, 2);
+			clear(renderer, textRect);
+			renderText(renderer, "Not Found !!!", text_color, textRect, font);
 			return;
 		}
 	}
 	else if (x > root->key)
 	{
 		render_particular_node(renderer, root, font,1);
+		clear(renderer, textRect);
+
+		renderText(renderer, "Searching...", text_color, textRect, font);
+
 		SDL_RenderPresent(renderer);
 		SDL_Delay(1000);
 		if(root->right!=nullptr)
@@ -180,16 +195,22 @@ void Search(int x, node* root, SDL_Renderer* renderer, TTF_Font* font)
 		else
 		{
 			render_particular_node(renderer, root, font, 2);
+			clear(renderer, textRect);
+
+			renderText(renderer, "Not Found !!!", text_color, textRect, font);
+
 			return;
 		}
 	}
 }
 
+
+
 int main(int argc, char *argv[]) {
 	SDL_Window *window;
 	SDL_Renderer* renderer;
 	SDL_DisplayMode DM;
-	
+
 	bool quit = false;
 
 	SDL_Init(SDL_INIT_VIDEO);
@@ -198,7 +219,7 @@ int main(int argc, char *argv[]) {
 	const int W = DM.w;
 	const int H = DM.h;
 
-	node *root=nullptr;
+	node *root = nullptr;
 	root = Insert(0, root);
 	root = Insert(1, root);
 	root = Insert(2, root);
@@ -269,14 +290,14 @@ int main(int argc, char *argv[]) {
 	root = Delete(4, root);
 
 	//std::cout << 7odes.size() << std::endl;
-	
-	TTF_Init();	  
+
+	TTF_Init();
 	window = SDL_CreateWindow(
-		"DSA",                 
-		SDL_WINDOWPOS_UNDEFINED,           
-		SDL_WINDOWPOS_UNDEFINED,          
+		"DSA",
+		SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED,
 		W,                               // width, in pixels
-		H-60,                               // height, in pixels
+		H - 60,                               // height, in pixels
 		SDL_WINDOW_OPENGL                  // flags - see below
 	);
 
@@ -285,13 +306,13 @@ int main(int argc, char *argv[]) {
 		printf("Could not create window: %s\n", SDL_GetError());
 		return 1;
 	}
-	
+
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	SDL_SetRenderDrawColor(renderer, 169, 169, 169, 255);
 
 	SDL_RenderClear(renderer);
 
-	TTF_Font* arial = TTF_OpenFont("../res/aller.ttf",500);
+	TTF_Font* arial = TTF_OpenFont("../res/aller.ttf", 500);
 
 	if (!arial) {
 		std::cout << TTF_GetError() << std::endl;
@@ -299,7 +320,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	SDL_Event evnt;
-	
+
 
 	while (!quit) {
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
@@ -308,7 +329,7 @@ int main(int argc, char *argv[]) {
 		renderNodes(renderer, root, arial);
 		SDL_RenderPresent(renderer);
 		while (SDL_PollEvent(&evnt)) {
-			
+
 			switch (evnt.type) {
 			case SDL_QUIT:
 				quit = true;

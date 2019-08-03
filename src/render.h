@@ -18,6 +18,13 @@ void renderText(SDL_Renderer* renderer, std::string text, SDL_Color _color, SDL_
 	SDL_DestroyTexture(textTexture);
 }
 
+void clear(SDL_Renderer* renderer, SDL_Rect rect)
+{
+	SDL_RenderDrawRect(renderer, &rect);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // the rect color (solid red) 
+	SDL_RenderFillRect(renderer, &rect);
+}
+
 void render_particular_node(SDL_Renderer* renderer, node* node, TTF_Font* font,int x)
 {
 	SDL_Surface *nodeSurface;

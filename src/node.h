@@ -32,6 +32,8 @@ void set_other_coord(node* root, int x, int W)
 }
 
 void set_coord(node* root, int W, int H) {
+	if (root == nullptr)
+		return;
 	root->nodeCoord.x = W / 2;
 	root->nodeCoord.y = 350;
 	set_other_coord(root,2,W);
