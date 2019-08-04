@@ -10,7 +10,7 @@ struct node
 	node *left;
 	node *right;
 };
-
+//set the coordinates of nodes
 void set_other_coord(node* root, int x, int W)
 {
 	if (root->left != nullptr)
@@ -30,7 +30,7 @@ void set_other_coord(node* root, int x, int W)
 		set_other_coord(root->right, ++x, W);
 	}
 }
-
+//set the coordinate of the root
 void set_coord(node* root, int W, int H) {
 	if (root == nullptr)
 		return;

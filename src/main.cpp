@@ -18,24 +18,24 @@ int H;
 node *root;
 SDL_Color text_color = { 0,51,102,255 };
 SDL_Rect textRect = { 500, 50, 500, 100 };
-
+//For input box
 void renderInputBox(SDL_Renderer* renderer, SDL_Rect rect) {
 	SDL_RenderDrawRect(renderer, &rect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // the rect color (solid red) 
 	SDL_RenderFillRect(renderer, &rect);
 }
-
+//For button to click
 void renderButtonBox(SDL_Renderer* renderer, SDL_Rect rect) {
 	SDL_RenderDrawRect(renderer, &rect);
 	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // the rect color (solid red) 
 	SDL_RenderFillRect(renderer, &rect);
 }
-
+//Check in which box user clicks
 bool clickedBox(SDL_Point p, SDL_Rect rect) {
 	return (p.x > rect.x && p.x < rect.x + rect.w && p.y > rect.y && p.y < rect.y + rect.h);
 }
 
-
+//To get input number
 void getInput(SDL_Renderer* renderer, std::string& inputText, bool& isQuit, SDL_Rect inputBoxRect, SDL_Rect buttonRect) {
 	inputText = "";
 	SDL_Event evnt;
@@ -92,14 +92,14 @@ void getInput(SDL_Renderer* renderer, std::string& inputText, bool& isQuit, SDL_
 	}
 	TTF_CloseFont(arial);
 }
-
+//To calculate height
 int height(node *x)
 {
 	if (x == nullptr)
 		return -1;
 	return x->height;
 }
-
+//Rotating right the given node
 node* rotate_right(node* x,SDL_Renderer* renderer, TTF_Font* font)
 {
 	set_coord(root, W, H);
@@ -127,7 +127,7 @@ node* rotate_right(node* x,SDL_Renderer* renderer, TTF_Font* font)
 	temp->height = std::max(height(temp->left), height(temp->right)) + 1;
 	return temp;
 }
-
+//To find the smallest element
 node* Smallest(node* root, SDL_Renderer* renderer, TTF_Font* font)
 {
 	
@@ -143,7 +143,7 @@ node* Smallest(node* root, SDL_Renderer* renderer, TTF_Font* font)
 	SDL_Delay(2000);
 	return x;
 }
-
+//To rotate left 
 node* rotate_left(node *x, SDL_Renderer* renderer, TTF_Font* font)
 {
 	set_coord(root, W, H);
@@ -171,7 +171,7 @@ node* rotate_left(node *x, SDL_Renderer* renderer, TTF_Font* font)
 	temp->height = std::max(height(temp->left), height(temp->right)) + 1;
 	return temp;
 }
-
+//To insert an element
 node* Insert(int x, node *root, SDL_Renderer* renderer, TTF_Font* font)
 {
 	node* n = new node();
@@ -231,8 +231,7 @@ node* Insert(int x, node *root, SDL_Renderer* renderer, TTF_Font* font)
 	return root;
 }
 
-
-
+//To delete  an element
 node* Delete(int x, node* root, SDL_Renderer* renderer, TTF_Font* font)
 {
 	if (root == nullptr)
@@ -326,7 +325,7 @@ node* Delete(int x, node* root, SDL_Renderer* renderer, TTF_Font* font)
 	}
 	return root;
 }
-
+//For searching
 void Search(int x, node* root, SDL_Renderer* renderer, TTF_Font* font)
 {
 	if (root == nullptr)
@@ -390,7 +389,6 @@ void Search(int x, node* root, SDL_Renderer* renderer, TTF_Font* font)
 		}
 	}
 }
-
 
 
 int main(int argc, char *argv[]) {

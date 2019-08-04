@@ -6,7 +6,7 @@
 #include <vector>
 #include "draw_line.h"
 
-
+//Render the text
 void renderText(SDL_Renderer* renderer, std::string text, SDL_Color _color, SDL_Rect Message_rect,TTF_Font* font){
 
 	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text.c_str(), _color); // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
@@ -17,14 +17,14 @@ void renderText(SDL_Renderer* renderer, std::string text, SDL_Color _color, SDL_
 	SDL_RenderCopy(renderer, textTexture, NULL, &Message_rect);
 	SDL_DestroyTexture(textTexture);
 }
-
+//To clear the text box
 void clear(SDL_Renderer* renderer, SDL_Rect rect)
 {
 	SDL_RenderDrawRect(renderer, &rect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // the rect color (solid red) 
 	SDL_RenderFillRect(renderer, &rect);
 }
-
+//To render single node
 void render_particular_node(SDL_Renderer* renderer, node* node, TTF_Font* font,int x)
 {
 	SDL_Surface *nodeSurface;
@@ -52,7 +52,7 @@ void render_particular_node(SDL_Renderer* renderer, node* node, TTF_Font* font,i
 	SDL_Rect textRect = { node->nodeCoord.x - 18, node->nodeCoord.y - 20, 30, 30 };
 	renderText(renderer, val, white, textRect, font);
 }
-
+//To render all the nodes of  tree
 void renderNodes(SDL_Renderer* renderer, node* Nodes, TTF_Font* font) {
 	if (Nodes == nullptr)
 		return;
