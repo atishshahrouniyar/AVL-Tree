@@ -9,9 +9,97 @@
 #include "AVL.h"
 #include <algorithm>
 #include <dos.h>
+#include <ctime>
+#include <string>
+
 
 SDL_Color text_color = { 100,230,58 };
 SDL_Rect textRect = { 500, 50, 500, 100 };
+
+void renderInputBox(SDL_Renderer* renderer, SDL_Rect rect) {
+	SDL_RenderDrawRect(renderer, &rect);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // the rect color (solid red) 
+	SDL_RenderFillRect(renderer, &rect);
+}
+
+void renderButtonBox(SDL_Renderer* renderer, SDL_Rect rect) {
+	SDL_RenderDrawRect(renderer, &rect);
+	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // the rect color (solid red) 
+	SDL_RenderFillRect(renderer, &rect);
+}
+
+bool clickedBox(SDL_Point p, SDL_Rect rect) {
+	return (p.x > rect.x && p.x < rect.x + rect.w && p.y > rect.y && p.y < rect.y + rect.h);
+}
+
+
+void getInput(SDL_Renderer* renderer, std::string& inputText, bool& isQuit, SDL_Rect inputBoxRect, SDL_Rect buttonRect) {
+	inputText = "";
+	SDL_Event evnt;
+	TTF_Font* arial = TTF_OpenFont("../res/arial.ttf", 3000);
+	auto start = std::clock();
+	while (true) {
+
+		float duration = float(std::clock() - start);
+		
+		if (SDL_PollEvent(&evnt)) {
+			if (evnt.type == SDL_QUIT) {
+				isQuit = true;
+				return;
+			}
+			if (evnt.type == SDL_KEYDOWN) {
+				if ((evnt.key.keysym.sym == SDLK_RETURN || evnt.key.keysym.sym == SDLK_KP_ENTER) && inputText != "") {
+					std::cout << "pressed enter" << std::endl;
+					return;
+				}
+				else if (evnt.key.keysym.sym == SDLK_BACKSPACE && inputText.size() > 0)
+				{
+					inputText.pop_back();
+					SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+					renderInputBox(renderer, inputBoxRect);
+					std::cout << inputText << std::endl;
+				}
+			}
+			else if (evnt.type == SDL_MOUSEBUTTONDOWN) {
+				int x, y;
+				x = evnt.button.x;
+				y = evnt.button.y;
+				if (clickedBox({ x,y }, buttonRect) && inputText != "")
+					return;
+
+			}
+
+			if (evnt.type == SDL_TEXTINPUT) {
+				int ascii = int(evnt.text.text[0]);
+				if (ascii > 47 && ascii < 58 && inputText.size() < 3)
+					inputText += evnt.text.text;
+				std::cout << inputText << std::endl;
+			}
+		}
+		SDL_Color black = { 0,0,0 };
+		SDL_Rect textRect = { inputBoxRect.x + 3, inputBoxRect.y + 3, (int)(inputText.size()) * 25, 25 };
+
+		renderText(renderer, inputText, black, textRect, arial);
+
+		/*for (int i = 0; i < inputText.size(); ++i) {
+			std::cout << "called this";
+			drawLine(renderer, { inputBoxRect.x + 3 + i * 25 , inputBoxRect.y + 3 }, { inputBoxRect.x + 3 + i * 25 , inputBoxRect.y + 27 }, { 255,255,255 });
+		}
+		if (duration <= 300) {
+
+			drawLine(renderer, { inputBoxRect.x + 3 + int(inputText.size()) * 25 , inputBoxRect.y + 3 }, { inputBoxRect.x + 3 + int(inputText.size()) * 25 , inputBoxRect.y + 27 });
+		}
+		else if (duration < 600 && duration > 300) {
+			drawLine(renderer, { inputBoxRect.x + 3 + int(inputText.size()) * 25 , inputBoxRect.y + 3 }, { inputBoxRect.x + 3 + int(inputText.size()) * 25 , inputBoxRect.y + 27 }, { 255,255,255 });
+
+		}
+		else
+			start = std::clock();*/
+		SDL_RenderPresent(renderer);
+
+	}
+	TTF_CloseFont(arial);
+}
 
 int height(node *x)
 {
@@ -213,6 +301,8 @@ int main(int argc, char *argv[]) {
 
 	bool quit = false;
 
+	std::string input_str[3];
+
 	SDL_Init(SDL_INIT_VIDEO);
 
 	SDL_GetCurrentDisplayMode(0, &DM);
@@ -220,75 +310,7 @@ int main(int argc, char *argv[]) {
 	const int H = DM.h;
 
 	node *root = nullptr;
-	root = Insert(0, root);
-	root = Insert(1, root);
-	root = Insert(2, root);
-	root = Insert(3, root);
-	root = Insert(4, root);
-	root = Insert(5, root);
-	root = Insert(6, root);
-	root = Insert(7, root);
-	root = Insert(8, root);
-	root = Insert(9, root);
-	root = Insert(10, root);
-	root = Insert(11, root);
-	root = Insert(12, root);
-	root = Insert(13, root);
-	root = Insert(14, root);
-	root = Insert(15, root);
-	root = Insert(16, root);
-	root = Insert(17, root);
-	root = Insert(18, root);
-	root = Insert(19, root);
-	root = Insert(20, root);
-	root = Insert(21, root);
-	root = Insert(22, root);
-	root = Insert(23, root);
-	root = Insert(24, root);
-	root = Insert(25, root);
-	root = Insert(26, root);
-	root = Insert(27, root);
-	root = Insert(28, root);
-	root = Insert(29, root);
-	root = Insert(30, root);
-	root = Insert(31, root);
-	root = Insert(32, root);
-	root = Insert(33, root);
-	root = Insert(34, root);
-	root = Insert(35, root);
-	root = Insert(36, root);
-	root = Insert(37, root);
-	root = Insert(38, root);
-	root = Insert(39, root);
-	root = Insert(40, root);
-	root = Insert(41, root);
-	root = Insert(42, root);
-	root = Insert(43, root);
-	root = Insert(44, root);
-	root = Insert(45, root);
-	root = Insert(46, root);
-	root = Insert(47, root);
-	root = Insert(48, root);
-	root = Insert(49, root);
-	root = Insert(50, root);
-	root = Insert(51, root);
-	root = Insert(52, root);
-	root = Insert(53, root);
-	root = Insert(54, root);
-	root = Insert(55, root);
-	root = Insert(56, root);
-	root = Insert(57, root);
-	root = Insert(58, root);
-	root = Insert(59, root);
-	root = Insert(60, root);
-	root = Insert(61, root);
-	root = Insert(62, root);
-	root = Delete(30, root);
-	root = Delete(39, root);
-	root = Delete(0, root);
-	root = Delete(2, root);
-	root = Delete(4, root);
-
+	
 	//std::cout << 7odes.size() << std::endl;
 
 	TTF_Init();
@@ -298,7 +320,7 @@ int main(int argc, char *argv[]) {
 		SDL_WINDOWPOS_UNDEFINED,
 		W,                               // width, in pixels
 		H - 60,                               // height, in pixels
-		SDL_WINDOW_OPENGL                  // flags - see below
+		0                 // flags - see below
 	);
 
 	if (window == NULL) {
@@ -318,27 +340,62 @@ int main(int argc, char *argv[]) {
 		std::cout << TTF_GetError() << std::endl;
 		return 1;
 	}
+	SDL_Rect textInputRect[3], buttonRect[3];
 
+	textInputRect[0] = { 50, 100, 100, 32 };
+	buttonRect[0] = { 200,100,150,32 };
+
+	textInputRect[1] = { 50, 200, 100, 32 };
+	buttonRect[1] = { 200,200,150,32 };
+
+	textInputRect[2] = { 50, 300, 100, 32 };
+	buttonRect[2] = { 200,300,150,32 };
+	
 	SDL_Event evnt;
 
+	
+	SDL_Color button_color = { 255,0,0,1 };
 
 	while (!quit) {
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-		set_coord(root, W, H);
-		drawLines(renderer, root);
-		renderNodes(renderer, root, arial);
-		SDL_RenderPresent(renderer);
-		while (SDL_PollEvent(&evnt)) {
+		for (int i = 0; i < 3; ++i) {
+			//SDL_SetRenderDrawColor(renderer, 255,255,255, 255);
+			renderInputBox(renderer, textInputRect[i]);
+			renderButtonBox(renderer, buttonRect[i]);
+		}
+		renderText(renderer, "INSERT", button_color, buttonRect[0], arial);
+		renderText(renderer, "DELETE", button_color, buttonRect[1], arial);
+		renderText(renderer, "SEARCH", button_color, buttonRect[2], arial);
+
+		//set_coord(root, W, H);
+		
+		//SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+
+		//drawLines(renderer, root);
+		//renderNodes(renderer, root, arial);
+		//SDL_RenderPresent(renderer);
+		/*while (SDL_PollEvent(&evnt)) {
 
 			switch (evnt.type) {
-			case SDL_QUIT:
+			case SDL_QUIT: {
 				quit = true;
-			case SDL_KEYDOWN:
-				if (evnt.key.keysym.sym == SDLK_SPACE)
-					Search(17, root, renderer, arial);
-
+			}break;
+			case SDL_MOUSEBUTTONDOWN: {
+				int x = evnt.button.x;
+				int y = evnt.button.y;
+				for (int i = 0; i < 3; ++i) {
+					if (clickedBox({ x,y }, textInputRect[i])) {
+						getInput(renderer, input_str[i], quit, textInputRect[i], buttonRect[i]);
+						if (i == 0)
+							Insert(std::stoi(input_str[i]), root);
+						else if (i == 1)
+							Delete(std::stoi(input_str[i]), root);
+						else if (i == 2)
+							Search(std::stoi(input_str[i]), root, renderer, arial);
+					}
+				}
 			}
-		}
+			}
+		}*/
 		SDL_RenderPresent(renderer);
 	}
 
