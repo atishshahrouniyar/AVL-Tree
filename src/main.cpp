@@ -12,8 +12,11 @@
 #include <ctime>
 #include <string>
 
+int W;
+int H;
 
-SDL_Color text_color = { 100,230,58 };
+node *root;
+SDL_Color text_color = { 0,51,102,255 };
 SDL_Rect textRect = { 500, 50, 500, 100 };
 
 void renderInputBox(SDL_Renderer* renderer, SDL_Rect rect) {
@@ -38,6 +41,10 @@ void getInput(SDL_Renderer* renderer, std::string& inputText, bool& isQuit, SDL_
 	SDL_Event evnt;
 	TTF_Font* arial = TTF_OpenFont("../res/arial.ttf", 3000);
 	auto start = std::clock();
+	drawLine(renderer, { inputBoxRect.x + 3 + int(inputText.size()) * 25 , inputBoxRect.y + 3 }, { inputBoxRect.x + 3 + int(inputText.size()) * 25 , inputBoxRect.y + 27 });
+	SDL_RenderPresent(renderer);
+	SDL_Delay(100);
+	drawLine(renderer, { inputBoxRect.x + 3 + int(inputText.size()) * 25 , inputBoxRect.y + 3 }, { inputBoxRect.x + 3 + int(inputText.size()) * 25 , inputBoxRect.y + 27 }, { 255,255,255 });
 	while (true) {
 
 		float duration = float(std::clock() - start);
@@ -55,8 +62,7 @@ void getInput(SDL_Renderer* renderer, std::string& inputText, bool& isQuit, SDL_
 				else if (evnt.key.keysym.sym == SDLK_BACKSPACE && inputText.size() > 0)
 				{
 					inputText.pop_back();
-					SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-					renderInputBox(renderer, inputBoxRect);
+				
 					std::cout << inputText << std::endl;
 				}
 			}
@@ -81,20 +87,6 @@ void getInput(SDL_Renderer* renderer, std::string& inputText, bool& isQuit, SDL_
 
 		renderText(renderer, inputText, black, textRect, arial);
 
-		/*for (int i = 0; i < inputText.size(); ++i) {
-			std::cout << "called this";
-			drawLine(renderer, { inputBoxRect.x + 3 + i * 25 , inputBoxRect.y + 3 }, { inputBoxRect.x + 3 + i * 25 , inputBoxRect.y + 27 }, { 255,255,255 });
-		}
-		if (duration <= 300) {
-
-			drawLine(renderer, { inputBoxRect.x + 3 + int(inputText.size()) * 25 , inputBoxRect.y + 3 }, { inputBoxRect.x + 3 + int(inputText.size()) * 25 , inputBoxRect.y + 27 });
-		}
-		else if (duration < 600 && duration > 300) {
-			drawLine(renderer, { inputBoxRect.x + 3 + int(inputText.size()) * 25 , inputBoxRect.y + 3 }, { inputBoxRect.x + 3 + int(inputText.size()) * 25 , inputBoxRect.y + 27 }, { 255,255,255 });
-
-		}
-		else
-			start = std::clock();*/
 		SDL_RenderPresent(renderer);
 
 	}
@@ -108,8 +100,26 @@ int height(node *x)
 	return x->height;
 }
 
-node* rotate_right(node* x)
+node* rotate_right(node* x,SDL_Renderer* renderer, TTF_Font* font)
 {
+	set_coord(root, W, H);
+
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+
+	drawLines(renderer, root);
+	renderNodes(renderer, root, font);
+	SDL_RenderPresent(renderer);
+	SDL_Delay(1000);
+	render_particular_node(renderer, x, font, 2);
+	clear(renderer, textRect);
+	renderText(renderer, "Tree Unbalanced", text_color, textRect, font);
+	SDL_RenderPresent(renderer);
+	SDL_Delay(1000);
+	clear(renderer, textRect);
+	SDL_Color white = { 255,255,255,255 };
+	renderText(renderer, "Rotating Right...", white, textRect, font);
+	SDL_RenderPresent(renderer);
+	SDL_Delay(1000);
 	node* temp = x->left;
 	x->left = x->left->right;
 	temp->right = x;
@@ -118,15 +128,42 @@ node* rotate_right(node* x)
 	return temp;
 }
 
-node* Smallest(node* root)
+node* Smallest(node* root, SDL_Renderer* renderer, TTF_Font* font)
 {
+	
 	node* x = root;
 	while (x->left != nullptr)
+	{
 		x = x->left;
+	}
+	render_particular_node(renderer, x, font, 2);
+	clear(renderer, textRect);
+	renderText(renderer, "Smallest on Right Found", text_color, textRect, font);
+	SDL_RenderPresent(renderer);
+	SDL_Delay(2000);
 	return x;
 }
-node* rotate_left(node *x)
+
+node* rotate_left(node *x, SDL_Renderer* renderer, TTF_Font* font)
 {
+	set_coord(root, W, H);
+
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+
+	drawLines(renderer, root);
+	renderNodes(renderer, root, font);
+	SDL_RenderPresent(renderer);
+	SDL_Delay(1000);
+	render_particular_node(renderer, x, font, 2);
+	clear(renderer, textRect);
+	renderText(renderer, "Tree Unbalanced", text_color, textRect, font);
+	SDL_RenderPresent(renderer);
+	SDL_Delay(1000);
+	clear(renderer, textRect);
+	SDL_Color white = { 255,255,255,255 };
+	renderText(renderer, "Rotating Left...", white, textRect, font);
+	SDL_RenderPresent(renderer);
+	SDL_Delay(1000);
 	node* temp = x->right;
 	x->right = x->right->left;
 	temp->left = x;
@@ -135,7 +172,7 @@ node* rotate_left(node *x)
 	return temp;
 }
 
-node* Insert(int x, node *root)
+node* Insert(int x, node *root, SDL_Renderer* renderer, TTF_Font* font)
 {
 	node* n = new node();
 	n->key = x;
@@ -143,14 +180,36 @@ node* Insert(int x, node *root)
 	n->left = nullptr;
 	n->right = nullptr;
 	if (root == nullptr)
+	{
 		return n;
+	}
 	else if (x < root->key)
-		root->left = Insert(x, root->left);
+	{
+		render_particular_node(renderer, root, font, 1);
+		clear(renderer, textRect);
+		renderText(renderer, "Searching Position...", text_color, textRect, font);
+		SDL_RenderPresent(renderer);
+		SDL_Delay(1000);
+		root->left = Insert(x, root->left, renderer, font);
+	}
 	else if (x > root->key)
-		root->right = Insert(x, root->right);
+	{
+		render_particular_node(renderer, root, font, 1);
+		clear(renderer, textRect);
+		renderText(renderer, "Searching Position...", text_color, textRect, font);
+		SDL_RenderPresent(renderer);
+		SDL_Delay(1000);
+		root->right = Insert(x, root->right, renderer, font);
+	}
 	else
+	{
+		render_particular_node(renderer, root, font, 2);
+		clear(renderer, textRect);
+		renderText(renderer, "Already Present", text_color, textRect, font);
+		SDL_RenderPresent(renderer);
+		SDL_Delay(500);
 		return root;
-
+	}
 	root->height = std::max(height(root->left), height(root->right)) + 1;
 
 	int balance = height(root->left) - height(root->right);
@@ -158,32 +217,57 @@ node* Insert(int x, node *root)
 	if (balance > 1)
 	{
 		if (x < root->left->key)
-			return rotate_right(root);
-		root->left = rotate_left(root->left);
-		return rotate_right(root);
+			return rotate_right(root, renderer, font);
+		root->left = rotate_left(root->left, renderer, font);
+		return rotate_right(root, renderer, font);
 	}
 	else if (balance < -1)
 	{
 		if (x > root->right->key)
-			return rotate_left(root);
-		root->right = rotate_right(root->right);
-		return rotate_left(root);
+			return rotate_left(root, renderer, font);
+		root->right = rotate_right(root->right, renderer, font);
+		return rotate_left(root, renderer, font);
 	}
 	return root;
 }
 
 
 
-node* Delete(int x, node* root)
+node* Delete(int x, node* root, SDL_Renderer* renderer, TTF_Font* font)
 {
 	if (root == nullptr)
+	{
+		clear(renderer, textRect);
+		renderText(renderer, "Not Found", {255,255,255,255}, textRect, font);
+		SDL_RenderPresent(renderer);
+		SDL_Delay(1000);
 		return root;
+	}
 	if (x < root->key)
-		root->left = Delete(x, root->left);
+	{
+		render_particular_node(renderer, root, font, 1);
+		clear(renderer, textRect);
+		renderText(renderer, "Searching Position...", text_color, textRect, font);
+		SDL_RenderPresent(renderer);
+		SDL_Delay(1000);
+		root->left = Delete(x, root->left, renderer, font);
+	}
 	else if (x > root->key)
-		root->right = Delete(x, root->right);
+	{
+		render_particular_node(renderer, root, font, 1);
+		clear(renderer, textRect);
+		renderText(renderer, "Searching Position...", text_color, textRect, font);
+		SDL_RenderPresent(renderer);
+		SDL_Delay(1000);
+		root->right = Delete(x, root->right, renderer, font);
+	}
 	else
 	{
+		render_particular_node(renderer, root, font, 0);
+		clear(renderer, textRect);
+		renderText(renderer, "Deleting...", text_color, textRect, font);
+		SDL_RenderPresent(renderer);
+		SDL_Delay(1000);
 		node* temp = root;
 		if (root->left == nullptr && root->right == nullptr)
 		{
@@ -206,9 +290,15 @@ node* Delete(int x, node* root)
 		}
 		else
 		{
-			temp = Smallest(root->right);
+			temp = Smallest(root->right, renderer, font);
 			root->key = temp->key;
-			root->right = Delete(temp->key, root->right);
+			render_particular_node(renderer, root, font, 0);
+			SDL_Delay(1000);
+			clear(renderer, textRect);
+			renderText(renderer, "Deleting that Smallest Element", text_color, textRect, font);
+			SDL_RenderPresent(renderer);
+			SDL_Delay(3000);
+			root->right = Delete(temp->key, root->right, renderer, font);
 		}
 	}
 	if (root == nullptr)
@@ -222,17 +312,17 @@ node* Delete(int x, node* root)
 	{
 		int balance_left = height(root->left->left) - height(root->left->right);
 		if (balance_left >= 0)
-			return rotate_right(root);
-		root->left = rotate_left(root->left);
-		return rotate_right(root);
+			return rotate_right(root, renderer, font);
+		root->left = rotate_left(root->left, renderer, font);
+		return rotate_right(root, renderer, font);
 	}
 	else if (balance < -1)
 	{
 		int balance_right = height(root->right->left) - height(root->right->right);
 		if (balance_right <= 0)
-			return rotate_left(root);
-		root->right = rotate_right(root->right);
-		return rotate_left(root);
+			return rotate_left(root, renderer, font);
+		root->right = rotate_right(root->right, renderer, font);
+		return rotate_left(root, renderer, font);
 	}
 	return root;
 }
@@ -241,6 +331,10 @@ void Search(int x, node* root, SDL_Renderer* renderer, TTF_Font* font)
 {
 	if (root == nullptr)
 	{
+		clear(renderer, textRect);
+		renderText(renderer, "Tree is Empty", text_color, textRect, font);
+		SDL_RenderPresent(renderer);
+		SDL_Delay(750);
 		std::cout << "Not Found!!!" << std::endl;
 		return;
 	}
@@ -249,6 +343,8 @@ void Search(int x, node* root, SDL_Renderer* renderer, TTF_Font* font)
 		render_particular_node(renderer, root, font, 0);
 		clear(renderer, textRect);
 		renderText(renderer, "Found !!!", text_color, textRect, font);
+		SDL_RenderPresent(renderer);
+		SDL_Delay(750);
 		std::cout << "Found!!!" << std::endl;
 		return;
 	}
@@ -266,6 +362,8 @@ void Search(int x, node* root, SDL_Renderer* renderer, TTF_Font* font)
 			render_particular_node(renderer, root, font, 2);
 			clear(renderer, textRect);
 			renderText(renderer, "Not Found !!!", text_color, textRect, font);
+			SDL_RenderPresent(renderer);
+			SDL_Delay(1000);
 			return;
 		}
 	}
@@ -286,7 +384,8 @@ void Search(int x, node* root, SDL_Renderer* renderer, TTF_Font* font)
 			clear(renderer, textRect);
 
 			renderText(renderer, "Not Found !!!", text_color, textRect, font);
-
+			SDL_RenderPresent(renderer);
+			SDL_Delay(1000);
 			return;
 		}
 	}
@@ -306,12 +405,10 @@ int main(int argc, char *argv[]) {
 	SDL_Init(SDL_INIT_VIDEO);
 
 	SDL_GetCurrentDisplayMode(0, &DM);
-	const int W = DM.w;
-	const int H = DM.h;
+	 W = DM.w;
+	 H = DM.h;
 
-	node *root = nullptr;
-	
-	//std::cout << 7odes.size() << std::endl;
+	root = nullptr;
 
 	TTF_Init();
 	window = SDL_CreateWindow(
@@ -330,10 +427,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	SDL_SetRenderDrawColor(renderer, 169, 169, 169, 255);
-
-	SDL_RenderClear(renderer);
-
 	TTF_Font* arial = TTF_OpenFont("../res/aller.ttf", 500);
 
 	if (!arial) {
@@ -352,28 +445,34 @@ int main(int argc, char *argv[]) {
 	buttonRect[2] = { 200,300,150,32 };
 	
 	SDL_Event evnt;
-
-	
-	SDL_Color button_color = { 255,0,0,1 };
-
-	while (!quit) {
-		for (int i = 0; i < 3; ++i) {
-			//SDL_SetRenderDrawColor(renderer, 255,255,255, 255);
-			renderInputBox(renderer, textInputRect[i]);
+	SDL_Color button_color = { 255,255,255,255};
+	while (!quit)
+	{
+		SDL_SetRenderDrawColor(renderer, 169, 169, 169, 255);
+		SDL_RenderClear(renderer);
+		SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+		for (int i = 0; i < 3; i++)
+		{
 			renderButtonBox(renderer, buttonRect[i]);
 		}
 		renderText(renderer, "INSERT", button_color, buttonRect[0], arial);
 		renderText(renderer, "DELETE", button_color, buttonRect[1], arial);
 		renderText(renderer, "SEARCH", button_color, buttonRect[2], arial);
-
-		//set_coord(root, W, H);
 		
-		//SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+		for (int i = 0; i < 3; ++i) {
+			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+			renderInputBox(renderer, textInputRect[i]);
+		}
+		set_coord(root, W, H);
 
-		//drawLines(renderer, root);
-		//renderNodes(renderer, root, arial);
-		//SDL_RenderPresent(renderer);
-		/*while (SDL_PollEvent(&evnt)) {
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+
+		drawLines(renderer, root);
+		renderNodes(renderer, root, arial);
+
+		SDL_RenderPresent(renderer);
+
+		while (SDL_PollEvent(&evnt)) {
 
 			switch (evnt.type) {
 			case SDL_QUIT: {
@@ -385,18 +484,29 @@ int main(int argc, char *argv[]) {
 				for (int i = 0; i < 3; ++i) {
 					if (clickedBox({ x,y }, textInputRect[i])) {
 						getInput(renderer, input_str[i], quit, textInputRect[i], buttonRect[i]);
-						if (i == 0)
-							Insert(std::stoi(input_str[i]), root);
+						if (input_str[i] == "")
+							break;
+						else if (i == 0)
+							root=Insert(std::stoi(input_str[i]), root,renderer,arial);
 						else if (i == 1)
-							Delete(std::stoi(input_str[i]), root);
+							root=Delete(std::stoi(input_str[i]), root,renderer,arial);
 						else if (i == 2)
 							Search(std::stoi(input_str[i]), root, renderer, arial);
+						break;
 					}
 				}
 			}
 			}
-		}*/
-		SDL_RenderPresent(renderer);
+			set_coord(root, W, H);
+
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+
+			drawLines(renderer, root);
+			renderNodes(renderer, root, arial);
+
+			SDL_RenderPresent(renderer);
+		}
+
 	}
 
 	TTF_CloseFont(arial);

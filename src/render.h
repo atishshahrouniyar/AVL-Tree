@@ -50,7 +50,6 @@ void render_particular_node(SDL_Renderer* renderer, node* node, TTF_Font* font,i
 	std::string val = std::to_string(node->key);
 	SDL_Color white = { 255,255,255 }, black = { 0,0,0 };
 	SDL_Rect textRect = { node->nodeCoord.x - 18, node->nodeCoord.y - 20, 30, 30 };
-	//SDL_Rect arrTextRect = { Nodes[i].arrRect.x + 10, Nodes[i].arrRect.y + 10, 30, 30 };
 	renderText(renderer, val, white, textRect, font);
 }
 
@@ -75,9 +74,7 @@ void renderNodes(SDL_Renderer* renderer, node* Nodes, TTF_Font* font) {
 	std::string val = std::to_string(Nodes->key);
 	SDL_Color white = { 255,255,255 }, black = {0,0,0};
 	SDL_Rect textRect = { Nodes->nodeCoord.x - 18, Nodes->nodeCoord.y - 20, 30, 30 };
-	//SDL_Rect arrTextRect = { Nodes[i].arrRect.x + 10, Nodes[i].arrRect.y + 10, 30, 30 };
 	renderText(renderer, val, white, textRect, font);
-	//renderText(renderer, val, black, arrTextRect, font);
 	renderNodes(renderer, Nodes->left, font);
 	renderNodes(renderer, Nodes->right, font);
 

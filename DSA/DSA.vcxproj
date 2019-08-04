@@ -149,7 +149,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\main.cpp" />
-    <ClCompile Include="AVL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="..\res\aller.ttf" />
@@ -160,7 +159,6 @@
     <ClInclude Include="..\src\draw_line.h" />
     <ClInclude Include="..\src\node.h" />
     <ClInclude Include="..\src\render.h" />
-    <ClInclude Include="AVL.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\res\black.bmp" />
