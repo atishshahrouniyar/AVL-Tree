@@ -102,6 +102,8 @@ int height(node *x)
 //Rotating right the given node
 node* rotate_right(node* x,SDL_Renderer* renderer, TTF_Font* font)
 {
+	SDL_SetRenderDrawColor(renderer, 169, 169, 169, 255);
+	SDL_RenderClear(renderer);
 	set_coord(root, W, H);
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
@@ -146,6 +148,8 @@ node* Smallest(node* root, SDL_Renderer* renderer, TTF_Font* font)
 //To rotate left 
 node* rotate_left(node *x, SDL_Renderer* renderer, TTF_Font* font)
 {
+	SDL_SetRenderDrawColor(renderer, 169, 169, 169, 255);
+	SDL_RenderClear(renderer);
 	set_coord(root, W, H);
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
